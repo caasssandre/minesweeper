@@ -20,6 +20,15 @@ body {
   font-size: 1.5rem;
 }
 
+#myButton {
+  display: none;
+  border-radius: 50%;
+  background-color: chocolate;
+  color: darkkhaki;
+  font-size: 25px;
+  padding: 10px;
+}
+
 .board {
   display: flex;
   flex-wrap: wrap;
