@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', startGame)
 
 function reloadGame(){
-  var newBoardSide = 4
-  var newNumOfMines = 5
-  var board = makeBoard(newBoardSide)
-  addMines(board, newNumOfMines)
-  startGame ()
+  initialize()
+  startGame()
+  return board
 }
 
 // Define your `board` object here!
@@ -75,13 +73,15 @@ function addMines(anyBoard, numOfMines){
   while (i < numOfMines)
   console.log("These are the remaining cells without mines " + cellsIndexArray)
 }
-
-var board = makeBoard(6)
-addMines(board, 5)
-
+var board;
+function initialize(){
+  board = makeBoard(6)
+  addMines(board, 2)
+}
 
 function startGame () {
   console.log('starting game')
+  initialize()
   board.cells.forEach(cell => cell.surroundingMines = countSurroundingMines(cell))
   document.addEventListener("click", checkForWin)
   document.addEventListener("contextmenu", checkForWin)
