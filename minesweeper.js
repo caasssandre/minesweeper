@@ -1,7 +1,54 @@
 document.addEventListener('DOMContentLoaded', startGame)
 
+function getUserInput(){
+  var userBoardSize = window.prompt("What size would you like the game? (between 2 and 6)")
+  var userNumOfBombs = window.prompt("How many bombs would you like?")
+  var userInput = [userBoardSize, userNumOfBombs]
+  return userInput
+}
+
+
+function checkForError(userInput){
+  console.log('this is userInsput ' + userInput + 'this is userInput[0] ' + userInput[0])
+  var possibleErrors = [
+    {
+      condition: (userInput[0] === "" || userInput[1] === ""),
+      alert: "You need to answer my questions :)"
+    },
+    {
+      condition: (userInput[0]<2),
+      alert: "Your board cannot be smaller than 2x2!"
+    },
+    {
+      condition: (userInput[0]>6),
+      alert: "Your board cannot be bigger than 6x6!"
+    },
+    {
+      condition: (Math.pow(userInput[0], 2)<userInput[1]),
+      alert: "Your board is too small for that many bombs!"
+    },
+    {
+      // tests to see if the values are positive integers
+      condition: (/^\d+$/.test(userInput[0]) === false || /^\d+$/.test(userInput[1]) === false),
+      alert: "You need to give me round numbers!"
+    }
+    /*{
+      condition: ,
+      alert: ""
+    },*/
+  ]
+  for (i=0; i<possibleErrors.length; i++){
+    if (possibleErrors[i].condition){
+      alert(possibleErrors[i].alert)
+      startGame()
+      return true
+    }
+  }
+  return false
+}
+
 function reloadGame(){
-  initialize()
+  hideButton()
   startGame()
   return board
 }
@@ -65,8 +112,8 @@ function addMines(anyBoard, numOfMines){
   var cellsIndexArray = makeIndexArray(anyBoard)
   i = 0
   do{
-    randomMineIndex = Math.floor(Math.random() * (cellsIndexArray.length - i))
-    mineIndex = (cellsIndexArray.splice(randomMineIndex, 1))
+    let randomMineIndex = Math.floor(Math.random() * (cellsIndexArray.length - i))
+    let mineIndex = cellsIndexArray.splice(randomMineIndex, 1)[0]
     anyBoard.cells[mineIndex].isMine = true
     i++
   }
@@ -74,14 +121,20 @@ function addMines(anyBoard, numOfMines){
   console.log("These are the remaining cells without mines " + cellsIndexArray)
 }
 var board;
-function initialize(){
-  board = makeBoard(6)
-  addMines(board, 2)
+
+function initialize(userInput){
+  board = makeBoard(userInput[0])
+  addMines(board, userInput[1])
 }
 
-function startGame () {
-  console.log('starting game')
-  initialize()
+function startGame (){
+  var userInput = getUserInput()
+  console.log('got user input ' + userInput)
+  let isError = checkForError(userInput)
+  if (isError === true){
+    return
+  }
+  initialize(userInput)
   board.cells.forEach(cell => cell.surroundingMines = countSurroundingMines(cell))
   document.addEventListener("click", checkForWin)
   document.addEventListener("contextmenu", checkForWin)
@@ -90,7 +143,9 @@ function startGame () {
   // Don't remove this function call: it makes the game work!
   lib.initBoard()
 }
-
+function hideButton(){
+  document.getElementById('myButton').style.display = 'none'
+}
 function showButton(){
   document.getElementById('myButton').style.display = 'block'
 }
